@@ -1,0 +1,53 @@
+CREATE DATABASE smart_classroom_db;
+USE smart_classroom_db;
+
+-- Users table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    role ENUM('admin', 'user') NOT NULL
+);
+
+-- Classroom table
+CREATE TABLE classrooms (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_number VARCHAR(50) NOT NULL,
+    building VARCHAR(100) NOT NULL,
+    capacity INT NOT NULL,
+    room_type VARCHAR(50) NOT NULL
+);
+
+-- Course table
+CREATE TABLE courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_code VARCHAR(50) NOT NULL,
+    course_name VARCHAR(150) NOT NULL,
+    teacher_name VARCHAR(100) NOT NULL,
+    student_count INT NOT NULL
+);
+
+-- Allocation table
+CREATE TABLE allocations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    classroom_id INT NOT NULL,
+    course_id INT NOT NULL,
+    allocation_date DATE NOT NULL,
+    time_slot VARCHAR(100) NOT NULL,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+-- Insert demo users
+INSERT INTO users (username, password, role) VALUES
+('admin', 'admin123', 'admin'),
+('user1', 'user123', 'user');
+
+
+
+http://localhost/smart_classroom_system/index.php
+
+
+
+
+http://localhost/smart_classroom_system/add_classroom.php
