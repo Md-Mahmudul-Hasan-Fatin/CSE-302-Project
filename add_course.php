@@ -12,6 +12,7 @@ if ($_SESSION['role'] != 'admin') {
     exit();
 }
 
+// Insert
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $course_code = $_POST['course_code'];
     $course_name = $_POST['course_name'];
@@ -20,20 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt = $conn->prepare("INSERT INTO courses (course_code, course_name, teacher_name, student_count) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sssi", $course_code, $course_name, $teacher_name, $student_count);
-
-    if ($stmt->execute()) {
-        $success = "Course added successfully!";
-    }
+    $stmt->execute();
 }
+
+// Fetch
+$result = $conn->query("SELECT * FROM courses");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Course</title>
+    <title>Courses</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="container">
     <h2>Add Course</h2>
 
@@ -45,10 +47,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Add Course</button>
     </form>
 
-    <?php if(isset($success)) echo "<p class='success'>$success</p>"; ?>
+    <h2>All Courses</h2>
 
-    <a href="dashboard.php">Back to Dashboard</a>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Teacher</th>
+            <th>Students</th>
+            <th>Action</th>
+        </tr>
+
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <tr>
+            <td><?php echo $row['id']; ?></td>
+            <td><?php echo $row['course_code']; ?></td>
+            <td><?php echo $row['course_name']; ?></td>
+            <td><?php echo $row['teacher_name']; ?></td>
+            <td><?php echo $row['student_count']; ?></td>
+            <td>
+                <a href="edit_course.php?id=<?php echo $row['id']; ?>">Edit</a> |
+                <a href="delete_course.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Delete?')">Delete</a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
+
+    <a href="dashboard.php">Back</a>
 </div>
+
 </body>
 </html>
-
